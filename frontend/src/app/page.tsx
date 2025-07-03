@@ -1,79 +1,147 @@
 'use client';
+import Image from 'next/image';
 import { useState } from 'react';
 
 export default function Home() {
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
-  const [result, setResult] = useState<{ bmi: number; category: string } | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [bmi, setBmi] = useState<number | null>(null);
+  const [category, setCategory] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setResult(null);
-
+  const calculateBMI = async () => {
     try {
-      const res = await fetch('http://localhost:8000/bmi', {
+      const response = await fetch('http://localhost:8000/bmi', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ weight: parseFloat(weight), height: parseFloat(height) }),
+        body: JSON.stringify({ weight: Number(weight), height: Number(height) }),
       });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.detail || 'Unbekannter Fehler');
-      }
-
-      const data = await res.json();
-      setResult(data);
-    } catch (err: any) {
-      setError(err.message);
+      const data = await response.json();
+      setBmi(data.bmi);
+      setCategory(data.category);
+    } catch (error) {
+      setBmi(null);
+      setCategory('❌ Fehler: Verbindung zum Server fehlgeschlagen');
     }
   };
 
   return (
-    <main className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4">
-      <h1 className="text-3xl font-bold mb-6 text-green-600">BMI Rechner</h1>
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-full max-w-sm space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Gewicht (kg)</label>
-          <input
-            type="number"
-            step="0.1"
-            value={weight}
-            onChange={(e) => setWeight(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded p-2"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Größe (cm)</label>
-          <input
-            type="number"
-            step="0.1"
-            value={height}
-            onChange={(e) => setHeight(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded p-2"
-            required
-          />
-        </div>
-        <button type="submit" className="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700">
-          Berechnen
-        </button>
-      </form>
+    <div style={{ minHeight: '100vh', backgroundColor: 'white' }}>
+      {/* Header mit STRIVE-Logo */}
+      <header style={{ 
+        width: '100%', 
+        padding: '12px 16px', 
+        backgroundColor: '#1B2A75', 
+        display: 'flex', 
+        alignItems: 'center' 
+      }}>
+        <Image src="/strive-logo.png" alt="STRIVE Logo" width={68} height={68} style={{ marginRight: '8px' }} />
+        <h1 style={{ color: 'white', fontSize: '24px', fontWeight: 'bold', margin: 0 }}>STRIVE BMI-Rechner</h1>
+      </header>
 
-      {result && (
-        <div className="mt-6 bg-white p-4 rounded shadow text-center">
-          <p className="text-xl font-bold">Dein BMI: {result.bmi}</p>
-          <p className="text-green-600 font-semibold">{result.category}</p>
+      {/* BMI Rechner - Zentriert */}
+      <div style={{ 
+        height: 'calc(100vh - 80px)', 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center',
+        padding: '16px'
+      }}>
+        <div style={{ 
+          width: '100%', 
+          maxWidth: '448px', 
+          padding: '32px 24px', 
+          border: '1px solid #d1d5db', 
+          borderRadius: '8px', 
+          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+          backgroundColor: '#f9fafb'
+        }}>
+          <h2 style={{ 
+            fontSize: '24px', 
+            fontWeight: '600', 
+            color: '#1B2A75', 
+            marginBottom: '16px', 
+            textAlign: 'center',
+            margin: '0 0 16px 0'
+          }}>BMI berechnen</h2>
+          
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ 
+              display: 'block', 
+              marginBottom: '4px', 
+              fontWeight: '500' 
+            }}>Gewicht (kg)</label>
+            <input
+              type="number"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+              style={{ 
+                width: '100%', 
+                border: '1px solid #d1d5db', 
+                borderRadius: '4px', 
+                padding: '8px 12px',
+                fontSize: '16px',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
+          
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ 
+              display: 'block', 
+              marginBottom: '4px', 
+              fontWeight: '500' 
+            }}>Größe (cm)</label>
+            <input
+              type="number"
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+              style={{ 
+                width: '100%', 
+                border: '1px solid #d1d5db', 
+                borderRadius: '4px', 
+                padding: '8px 12px',
+                fontSize: '16px',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
+          
+          <button
+            onClick={calculateBMI}
+            style={{ 
+              width: '100%', 
+              backgroundColor: '#BBC52C', 
+              color: 'white', 
+              fontWeight: 'bold', 
+              padding: '8px 16px', 
+              borderRadius: '4px',
+              border: 'none',
+              fontSize: '16px',
+              cursor: 'pointer'
+            }}
+            onMouseOver={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#a6b028'}
+            onMouseOut={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#BBC52C'}
+          >
+            Berechnen
+          </button>
+          
+          {bmi !== null && (
+            <div style={{ marginTop: '24px', textAlign: 'center' }}>
+              <p style={{ 
+                fontSize: '18px', 
+                fontWeight: '600', 
+                color: '#1B2A75',
+                margin: '0 0 8px 0'
+              }}>BMI: {bmi}</p>
+              <p style={{ 
+                fontSize: '16px', 
+                color: '#374151',
+                margin: '0'
+              }}>{category}</p>
+            </div>
+          )}
         </div>
-      )}
-
-      {error && (
-        <div className="mt-6 text-red-600">
-          <p>❌ Fehler: {error}</p>
-        </div>
-      )}
-    </main>
+      </div>
+    </div>
   );
 }
