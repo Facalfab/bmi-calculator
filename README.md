@@ -32,7 +32,7 @@ Frontend läuft auf http://localhost:3000, Backend auf http://localhost:8000.
 
 # Testen mit Postman
 
-Alle Fehlerfälle und Testfälle findest du in der API-Wiki-Seite
+Alle Fehlerfälle und Testfälle findest du in der [API-Wiki-Seite](https://github.com/Facalfab/bmi-calculator/wiki/Fehlerübersicht).
 
 # Projektstruktur
 
