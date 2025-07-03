@@ -70,7 +70,7 @@ Beispiel-Response
 | Höhe ist 0 oder negativ  | 400        | `{ "weight": 70, "height": 0 }`     |
 | Ungültiger Datentyp      | 422        | `{ "weight": "abc", "height": 180 }`|
 
-Siehe vollständige Fehlerübersicht in der [Wiki](https://github.com/Facalfab/bmi-calculator/wiki)
+Siehe vollständige Fehlerübersicht in der [Wiki](https://github.com/Facalfab/bmi-calculator/wiki/Fehlerübersicht)
 
 ## Postman
 Eine vollständige Postman-Test-Collection ist in Arbeit.
