@@ -1,19 +1,25 @@
-# main.py
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 app = FastAPI()
 
+# ✅ CORS aktivieren
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class BMIRequest(BaseModel):
     weight: float = Field(..., gt=0, description="Weight in kilograms")
     height: float = Field(..., gt=0, description="Height in centimeters")
 
-
 class BMIResponse(BaseModel):
     bmi: float
     category: str
-
 
 @app.post("/bmi", response_model=BMIResponse)
 def calculate_bmi(data: BMIRequest):
